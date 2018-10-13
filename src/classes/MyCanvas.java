@@ -108,7 +108,7 @@ public class MyCanvas extends JPanel {
 
         }else if(displayEntity==2){
             for(int i=1;i!=shortestroute.size();i++){
-                g.setColor(Color.RED);
+                g.setColor(Color.GREEN);
                 Coordinate a=shortestroute.get(i-1);
                 Coordinate b=shortestroute.get(i);
                 g.drawLine(a.getX(),a.getY(),b.getX(),b.getY());
@@ -247,7 +247,7 @@ public class MyCanvas extends JPanel {
     }
     
     public  ArrayList<Coordinate> GetShortestDistanceBetween(String a,String b){
-        ArrayList<ArrayList<Coordinate>> mainpool=new ArrayList<ArrayList<Coordinate>>();
+        ArrayList<ArrayList<Coordinate>> mainpool=new ArrayList<>();
         
         Coordinate Source=getLocationFromName(a);
         Coordinate Destination=getLocationFromName(b);
@@ -294,37 +294,62 @@ public class MyCanvas extends JPanel {
             if(identifiedNearestLocationSequence==null){
                 System.out.println("identifiedNearestLocationSequence is null");
             }
+            
+            
+            Coordinate lastNearestNodeYet=identifiedNearestLocationSequence.get(identifiedNearestLocationSequence.size()-1);
             for(Coordinate tl:identifiedNearestLocationSequence){
                 System.out.println(tl.getName());
             }
 
             //check and add the 4 corners of shortest route if not in last nodes      
+            boolean anotherRoute=false;
             
-            if(identifiedNearestLocationSequence.get(identifiedNearestLocationSequence.size()-1).getNe()!=null){
-                Coordinate ne=identifiedNearestLocationSequence.get(identifiedNearestLocationSequence.size()-1).getNe();
+            if(lastNearestNodeYet.getNe()!=null){
+                Coordinate ne=lastNearestNodeYet.getNe();
                 ArrayList<Coordinate> newlist= (ArrayList<Coordinate>)identifiedNearestLocationSequence.clone();
                 newlist.add(ne);
                 mainpool.add(newlist);
+                anotherRoute=true;
             }
             
-            if(identifiedNearestLocationSequence.get(identifiedNearestLocationSequence.size()-1).getNw()!=null){
-                Coordinate nw=identifiedNearestLocationSequence.get(identifiedNearestLocationSequence.size()-1).getNw();
+            if(lastNearestNodeYet.getNw()!=null){
+                Coordinate nw=lastNearestNodeYet.getNw();
                 ArrayList<Coordinate> newlist= (ArrayList<Coordinate>)identifiedNearestLocationSequence.clone();
                 newlist.add(nw);
                 mainpool.add(newlist);
+                anotherRoute=true;
             }
-            if(identifiedNearestLocationSequence.get(identifiedNearestLocationSequence.size()-1).getSe()!=null){
-                Coordinate se=identifiedNearestLocationSequence.get(identifiedNearestLocationSequence.size()-1).getSe();
+            
+            if(lastNearestNodeYet.getSe()!=null){
+                Coordinate se=lastNearestNodeYet.getSe();
                 ArrayList<Coordinate> newlist= (ArrayList<Coordinate>)identifiedNearestLocationSequence.clone();
                 newlist.add(se);
                 mainpool.add(newlist);
+                anotherRoute=true;
             }
             
-            if(identifiedNearestLocationSequence.get(identifiedNearestLocationSequence.size()-1).getSw()!=null){
-                Coordinate sw=identifiedNearestLocationSequence.get(identifiedNearestLocationSequence.size()-1).getSw();
+            if(lastNearestNodeYet.getSw()!=null){
+                Coordinate sw=lastNearestNodeYet.getSw();
                 ArrayList<Coordinate> newlist= (ArrayList<Coordinate>)identifiedNearestLocationSequence.clone();
                 newlist.add(sw);
                 mainpool.add(newlist);
+                anotherRoute=true;
+            }
+            
+            
+            if(anotherRoute){
+                //remove the fucking old route...
+                
+                ArrayList<Integer> itemnos=new ArrayList<>();
+                for(int i=mainpool.size()-1;i>=0;i--){
+                    if(mainpool.get(i).get(mainpool.get(i).size()-1)==lastNearestNodeYet){
+                        itemnos.add(i);
+                    }
+                }
+                for(Integer delindex:itemnos){
+                    mainpool.remove(delindex);                    
+                }
+                
             }
         }
     }
